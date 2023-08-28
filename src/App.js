@@ -1,6 +1,6 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom'
-import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { useState, useEffect } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebase-config'
 
@@ -9,10 +9,7 @@ import CreatePost from './pages/CreatePost';
 import Login from './pages/Login';
 
 
-
 function App() {
-
-
   const [isAuth, setIsAuth] = useState(false);
 
   const signUserOut = () => {
@@ -23,17 +20,25 @@ function App() {
     })
   }
 
+  useEffect(() => {
+    const isAuth = localStorage.getItem('isAuth');
+    if (isAuth === 'true') {
+      setIsAuth(true);
+    }
+  }, []);
+
   return (
     <Router className="App">
-      <nav>
-        <Link to='/'>Home</Link>
-
-        {!isAuth ? <Link to='/login'>Login</Link> :
-          <>
-            <Link to='/CreatePost'>Create Post</Link>
-            <button onClick={signUserOut}>Log out</button>
-          </>
-        }
+      <nav className="navbar">
+        <div className="center-section">
+          <Link to='/'>Home</Link>
+          {isAuth && <Link to='/createPost'>Create Post</Link>}
+        </div>
+        <div className="right-section">
+          {!isAuth ? <Link to='/login'>Login</Link> :
+            <button className="log-out" onClick={signUserOut}>Log out</button>
+          }
+        </div>
       </nav>
       <Routes>
         <Route path='/' element={<Home isAuth={isAuth} />} />
