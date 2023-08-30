@@ -248,6 +248,43 @@ textarea {
     border-radius: 50%;
 }
 
+.confirmationPopup {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10000px rgba(0, 0, 0, 1);
+    padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    width: 300px;
+
+    text-align: center;
+}
+
+.confirmationPopup p {
+    margin-bottom: 15px;
+}
+
+.confirmationPopup button {
+    margin: 0 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.confirmationPopup button:nth-child(2) {
+    background-color: #dc3545;
+    color: white;
+}
+
+.confirmationPopup button:nth-child(3) {
+    color: #333;
+}
+
 @media (max-width: 720px) {
     .homePage .post {
         width: 70%;
@@ -265,5 +302,9 @@ textarea {
     }
     .time-and-author {
         gap: auto;
+    }
+
+    .confirmationPopup {
+        width: 80%;
     }
 }

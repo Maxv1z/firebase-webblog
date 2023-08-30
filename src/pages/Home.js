@@ -5,17 +5,20 @@ import { auth, db } from "../firebase-config";
 function Home({ isAuth }) {
     const [postLists, setPostList] = useState([]);
     const postsCollectionRef = collection(db, "posts");
+    const [deleteConfirmation, setDeleteConfirmation] = useState(false);
 
 
 
     const deletePost = async (id) => {
-        const postDoc = doc(db, "posts", id);
-        await deleteDoc(postDoc);
+        if (deleteConfirmation) {
+            const postDoc = doc(db, "posts", id);
+            await deleteDoc(postDoc);
+        }
+        setDeleteConfirmation(false);
     };
 
     function getRelativeTime(createdAt) {
         const postTime = new Date(createdAt);
-        console.log(postTime, "asdfasdfasdf")
         const currentTime = new Date();
         const timeDifference = currentTime - postTime;
 
@@ -52,7 +55,7 @@ function Home({ isAuth }) {
             {postLists.map((post) => {
                 const createdAtDate = new Date(post.createdAt.seconds * 1000)
                 return (
-                    <div className="post" key={post.id}>
+                    <div className={`post ${post.id}`} key={post.id}>
                         <div className="postHeader">
                             <div className="title">
                                 <img src={post.author.avatar} alt="Profile" className='profile-picture' />
@@ -60,13 +63,22 @@ function Home({ isAuth }) {
                             </div>
                             <div className="deletePost">
                                 {isAuth && post.author.id === auth.currentUser.uid && (
-                                    <button className="deletePost"
-                                        onClick={() => {
-                                            deletePost(post.id);
-                                        }}
-                                    >
-                                        x
-                                    </button>
+                                    <>
+                                        <button className="deletePost"
+                                            onClick={() => {
+                                                setDeleteConfirmation(true);
+                                            }}
+                                        >
+                                            x
+                                        </button>
+                                        {deleteConfirmation && (
+                                            <div className="confirmationPopup">
+                                                <p>Delete this post?</p>
+                                                <button onClick={() => deletePost(post.id)}>Confirm</button>
+                                                <button onClick={() => setDeleteConfirmation(false)}>Cancel</button>
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
                         </div>
@@ -74,7 +86,6 @@ function Home({ isAuth }) {
                         <div className="time-and-author">
                             <h3>@{post.author.name}</h3>
                             <h3 className="time">{getRelativeTime(createdAtDate)}</h3>
-
                         </div>
                     </div>
                 );

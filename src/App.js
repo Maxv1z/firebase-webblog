@@ -7,6 +7,7 @@ import { auth } from './firebase-config'
 import Home from './pages/Home'
 import CreatePost from './pages/CreatePost';
 import Login from './pages/Login';
+// import Profile from './pages/Profile';
 
 
 function App() {
@@ -36,7 +37,9 @@ function App() {
         </div>
         <div className="right-section">
           {!isAuth ? <Link to='/login'>Login</Link> :
-            <button className="log-out" onClick={signUserOut}>Log out</button>
+            <>
+              <button className="log-out" onClick={signUserOut}>Log out</button>
+            </>
           }
         </div>
       </nav>
