@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { getDocs, collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
-import { auth, db } from "../firebase-config";
+import { auth, db, storage } from "../firebase-config";
+import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage'
+
 
 function Home({ isAuth }) {
     const [postLists, setPostList] = useState([]);
@@ -39,16 +41,38 @@ function Home({ isAuth }) {
         }
     }
 
+    const [imageList, setImageList] = useState([])
+
+    const imageListRef = ref(storage, "images/")
+
     useEffect(() => {
-        const unsubscribe = onSnapshot(postsCollectionRef, (snapshot) => {
-            const updatedPosts = snapshot.docs.map((doc) => ({
-                ...doc.data(),
-                id: doc.id,
-            }));
+        const unsubscribe = onSnapshot(postsCollectionRef, async (snapshot) => {
+            const updatedPosts = [];
+
+            for (const doc of snapshot.docs) {
+                const post = doc.data();
+                post.id = doc.id;
+
+                if (post.imageURL) {
+                    try {
+                        // Fetch the image URL using the imageURL path
+                        const imageRef = ref(storage, post.imageURL);
+                        const imageURL = await getDownloadURL(imageRef);
+                        post.imageURL = imageURL;
+                    } catch (error) {
+                        console.error("Error fetching image URL:", error);
+                    }
+                }
+
+                updatedPosts.push(post);
+            }
+
             setPostList(updatedPosts);
         });
+
         return () => unsubscribe();
     }, []);
+
 
     return (
         <div className="homePage">
@@ -60,6 +84,7 @@ function Home({ isAuth }) {
                             <div className="title">
                                 <img src={post.author.avatar} alt="Profile" className='profile-picture' />
                                 <h1>{post.title}</h1>
+                                {post.image && <img src={post.image} alt='Post' className="post-img" />}
                             </div>
                             <div className="deletePost">
                                 {isAuth && post.author.id === auth.currentUser.uid && (

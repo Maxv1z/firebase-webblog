@@ -186,6 +186,11 @@ textarea {
     padding-top: 20px;
 }
 
+.post-img {
+    width: 150px;
+    height: auto;
+}
+
 .homePage .post {
     width: 600px;
     height: auto;
@@ -206,6 +211,14 @@ textarea {
 .postHeader .title {
     flex: 50%;
 }
+
+.title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .postHeader .deletePost {
     flex: 50%;
     display: flex;
@@ -306,5 +319,8 @@ textarea {
 
     .confirmationPopup {
         width: 80%;
+    }
+    .title {
+        flex-direction: column;
     }
 }
